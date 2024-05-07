@@ -759,17 +759,17 @@ struct NsoFile {
 
     ElfEHInfo eh;
     uintptr_t eh_frame_ptr;
-    uintptr_t eh_frame_size;
-
     if (eh.MeasureFrame(
             reinterpret_cast<eh_frame_hdr*>(&image[eh_info.hdr_addr]),
-            &eh_frame_ptr, &eh_frame_size)) {
+            &eh_frame_ptr, (uintptr_t *)&eh_info.frame_size)) {
       eh_info.frame_addr =
           eh_info.hdr_addr + (eh_frame_ptr - reinterpret_cast<uintptr_t>(
-                                                &image[eh_info.hdr_addr]));
+                                                 &image[eh_info.hdr_addr]));
+      // XXX the alignment of sizes is a fudge...
       eh_info.hdr_size = ALIGN_UP(eh_info.hdr_size, 0x10);
-      eh_info.frame_size = ALIGN_UP(eh_frame_size, 0x10);
+      eh_info.frame_size = ALIGN_UP(eh_info.frame_size, 0x10);
       present.eh = true;
+      // Account for .eh_frame_hdr and .eh_frame
       shdrs_needed += 2;
       shstrtab.AddString(".eh_frame_hdr");
       shstrtab.AddString(".eh_frame");

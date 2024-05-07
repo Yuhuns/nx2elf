@@ -13,7 +13,7 @@ clean:
 	rm -f *.o
 else
 all: *.cpp *.c *.h
-	g++ -o nx2elf *.cpp *.c -std=c++17
+	g++ -o nx2elf *.cpp *.c -std=c++17 -Wno-deprecated-declarations -Wno-deprecated
 clean:
 	rm -f nx2elf
 	rm -f *.o
